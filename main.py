@@ -67,21 +67,60 @@ class Kasir:
         self.order = []
     
     def create_order(self):
-
-        pesan = input("Masukkan nama menu yang ingin dipesan : ")
-        qty = int(input("Masukkan jumlah pesanan : "))
-        for i in resto.menu:
-            if pesan == i.nama:
-                self.order.append(i)
-                print("Pesanan berhasil ditambahkan")
-                break
-        r1 = r.randint(1, 15)
-        self.order = []
-        self.order.append(Kasir(r1, r1, "Done", 25000))
-        self.order.append(Kasir(r1, 2, "Done", 30000))
-        self.order.append(Kasir(3, 3, "Done", 10000))
-        self.order.append(Kasir(4, 4, "Done", 15000))
-        return self.order
+    no_meja = int(input("Masukkan nomor meja: "))
+    
+    # Inisialisasi total dan list pesanan
+    total = 0
+    pesanan = []
+    
+    while True:
+            print("menu yang tersediia")
+            for i in self.daftar_menu:
+                if i.available:
+                print(f"menu  : {i.nama}, harga :  {i.harga}")
+              
+              pesanan  = input("masukkan nama makanan yang ingin dipesan : ")
+              jumlah = int(input("masukkan jumlah makanan"))
+              
+              dipesan = None
+              for i in self.daftar_menu:
+                  if pesananan == i.nama and i.available:
+                      i.nama = dipesan
+                  elif dipesan is None:
+                      print("makanan tidak ditemukan")
+              if jumlah <= 0:
+                  print("tidak jadi memesan")
+                  continue
+              except ValueError:
+                  print("kesalahan value program restart")
+                  continue
+                  
+            subtotal = dipesan.harga * jumlah
+            total = subtotal
+            pesanan.append({
+               "menu dipesan":dipesan.nama,
+               "harga":harga,
+               "total":total
+            })
+            
+        if pesanan:
+        self.orderID = order_id
+        self.no_meja = no_meja
+        self.status = "Proses"
+        self.total = total
+        self.order = pesanan
+        
+        print("\n=== Ringkasan Pesanan ===")
+        print(f"Order ID: {self.orderID}")
+        print(f"Nomor Meja: {self.no_meja}")
+        print("\nMenu yang dipesan:")
+        for item in self.order:
+            print(f"- {item['menu']} (x{item['jumlah']}) - Rp {item['subtotal']}")
+        print(f"\nTotal: Rp {self.total}")
+        return True
+    else:
+        print("Tidak ada item yang dipesan!")
+        return False
 
 resto = dapur("Default Nama", "Default Deskripsi", 0, "Default Category", False)
 resto.create_menu()
