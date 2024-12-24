@@ -59,31 +59,106 @@ class dapur:
             print(f"{i.nama} - {i.deskripsi} - {i.harga} - {i.category} - {i.available}")
 
 class Kasir:
-    def __init__(self, orderID, no_meja, status, total):
+    def __init__(self, orderID, no_meja, status, total, daftarMenu):
         self.orderID = orderID
         self.no_meja = no_meja
         self.status = status
         self.total = total
         self.order = []
+        self.daftarMenu = daftarMenu
     
     def create_order(self):
+     no_meja = int(input("Masukkan nomor meja: "))\
 
-        pesan = input("Masukkan nama menu yang ingin dipesan : ")
-        qty = int(input("Masukkan jumlah pesanan : "))
-        for i in resto.menu:
-            if pesan == i.nama:
-                self.order.append(i)
-                print("Pesanan berhasil ditambahkan")
-                break
-        r1 = r.randint(1, 15)
-        self.order = []
-        self.order.append(Kasir(r1, r1, "Done", 25000))
-        self.order.append(Kasir(r1, 2, "Done", 30000))
-        self.order.append(Kasir(3, 3, "Done", 10000))
-        self.order.append(Kasir(4, 4, "Done", 15000))
-        return self.order
+    # Inisialisasi total dan list pesanan
+     total = 0
+     pesankan = []
 
-resto = dapur("Default Nama", "Default Deskripsi", 0, "Default Category", False)
-resto.create_menu()
-resto.show_menu()
-resto.stok_menu()
+     while True:
+        print("menu yang tersediia")
+        for i in self.daftarMenu:
+            if i.available:
+                print(f"menu  : {i.nama}, harga :  {i.harga}")
+          
+        pesanan  = input("masukkan nama makanan yang ingin dipesan : ")
+        jumlah = int(input("masukkan jumlah makanan"))
+          
+        dipesan = None
+        for i in self.daftarMenu:
+            if pesanan == i.nama and i.available:
+                dipesan = i
+            elif dipesan == False:
+                print("makanan tidak ditemukan")
+        if jumlah <= 0:
+            print("tidak jadi memesan")
+            continue
+              
+        subtotal = dipesan.harga * jumlah
+        total += subtotal
+        pesankan.append({
+            "menu": dipesan.nama,
+            "jumlah": jumlah,
+            "subtotal": subtotal
+        })
+        
+        lanjut = input("Apakah ingin memesan lagi? (ya/tidak): ")
+        if lanjut.lower() != "ya":
+            break
+        
+     if pesanan:
+        self.orderID = r.randint(1000, 9999)
+        self.no_meja = no_meja
+        self.status = "Proses"
+        self.total = total
+        self.order = pesankan
+    
+        print("\n=== Ringkasan Pesanan ===")
+        print(f"Order ID: {self.orderID}")
+        print(f"Nomor Meja: {self.no_meja}")
+        print("\nMenu yang dipesan:")
+        for item in self.order:
+            print(f"- {item['menu']} (x{item['jumlah']}) - Rp {item['subtotal']}")
+        print(f"\nTotal: Rp {self.total}")
+        return self.total,self.orderID,self.no_meja,self.status
+        exit()
+     else:
+        print("Tidak ada item yang dipesan!")
+
+    def strukBayar(self):
+        return self.total,self.orderID,self.no_meja,self.status
+
+class Payment:
+    def __init__(self, orderID, total, status, no_meja):
+        self.orderID = orderID
+        self.total = total
+        self.status = status
+        self.no_meja = no_meja
+
+    def payment_process(self):
+        print("=== Pembayaran ===")
+        print(f"memproses pembayaran order-ID - {self.orderID}\ndengan nomor meja {self.no_meja} \ndengan total pembayaran Rp {self.total}")
+        bayar = int(input("Masukkan nominal pembayaran: "))
+        if bayar > self.total:
+            kembalian = bayar - self.total
+            print(f"kembalian sebesar {kembalian}")
+            self.status = "Paid"
+        elif bayar == self.total:
+            print("Pembayaran berhasil")
+            self.status = "Paid"
+        
+        print("Rincian Pembayaran")
+        print(f"Order ID: {self.orderID}\n meja: {self.no_meja}\n status: {self.status}\n total: {self.total}")
+def main():
+    print("=== Aplikasi Kasir ===")
+    resto = dapur("Default Nama", "Default Deskripsi", 0, "Default Category", False)
+    daftar_menu = resto.create_menu()
+    kasir = Kasir(0, 0, "Default Status", 0, daftar_menu)
+    resto.create_menu()
+    #resto.show_menu()
+    kasir.create_order()
+
+    total, orderID, no_meja, status = kasir.strukBayar()
+    payment = Payment(orderID, total, status, no_meja)
+    payment.payment_process()
+if __name__ == "__main__":
+    main()
